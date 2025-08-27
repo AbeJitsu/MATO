@@ -1,0 +1,30 @@
+Type,Question,Explanation,Answer,Correct,Meta Key,Meta Value
+MC,Q1 This is the question stem.,This is optional explanation text.,Answer choice 1,,ID,Q1
+,,,Answer choice 2,,Difficulty,Moderate
+,,,Answer choice 3,1,Source,Pub 17
+,,,Answer choice 4,,,
+TF,Q2 This is the question stem for a true/false question.,This is the explanation text.,True,1,ID,J7632142
+,,,False,,Difficulty,Easy
+,,,,,Source,Pub 17
+,,,,,Author,Sean
+MA,Q3 This is the question stem for a Multiple Answer question type.,This is the explanation text.,,,ID,35763-2023Y
+,,,Answer choice 1,1,Source,Pub 17
+,,,Answer choice 2,,,
+,,,Answer choice 3,,,
+,,,Answer choice 4,1,,
+,,,Answer choice 5,,,
+FB,Q3 This is the question  ___________ for a Fill in the Blank question type.,,stem,1,ID,568900056
+,,,,,Difficulty,Easy
+,,,,,Source,2023 Textbook
+MC,Q4 This is the question stem. row 19,This is the explanation text. ,"$5,000",,ID,2763576534
+,,,"$6,000.00",1,Difficulty,Moderate
+,,,12/25/2024,,Source,Chapter 3
+,,,"January 6, 2020",,,
+MC,Q5 This is the question stem. row 23,This is the explanation text.,6%,,ID,2763576534
+,,,0.05,1,Difficulty,Moderate
+,,,1/2,,Source,Pub 17
+,,,0.1234567,,,
+MC,A6 This is the question stem. row 27,This is the explanation text.,Answer choice 1,,ID,2763576534
+,,,Answer choice 2,1,Difficulty,Moderate
+,,,Answer choice 3,,Source,Pub 17
+,,,Answer choice 4,,,
