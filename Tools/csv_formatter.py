@@ -21,6 +21,10 @@ def format_csv_for_converter(input_csv_path, output_csv_path):
     with open(input_csv_path, 'r', encoding='utf-8') as infile, \
          open(output_csv_path, 'w', encoding='utf-8', newline='') as outfile:
         
+        # Skip the first two rows (title and blank row)
+        next(infile)  # Skip title row
+        next(infile)  # Skip blank row
+        
         reader = csv.DictReader(infile)
         
         # Define target fieldnames for the converter
@@ -35,12 +39,19 @@ def format_csv_for_converter(input_csv_path, output_csv_path):
             if not row.get('Question Stem') or not row['Question Stem'].strip():
                 continue
                 
-            # Skip header/metadata rows
             question_stem = row['Question Stem'].strip()
-            if not question_stem or question_stem == 'Question Stem':
+            
+            # Skip header repetitions, section headers, and metadata
+            if (question_stem == 'Question Stem' or 
+                'Final Exam' in question_stem or 
+                'Quiz' in question_stem or
+                not any(row.get(f'Answer {letter}', '').strip() for letter in ['A', 'B', 'C', 'D'])):
                 continue
             
             # Transform the row to target format
+            question_number = row.get('Question #', '').strip()
+            source_id = f"PREP FL {question_number}" if question_number else "PREP FL"
+            
             formatted_row = {
                 'Question': question_stem,
                 'Choice 1': row.get('Answer A', '').strip(),
@@ -49,7 +60,7 @@ def format_csv_for_converter(input_csv_path, output_csv_path):
                 'Choice 4': row.get('Answer D', '').strip(),
                 'Correct Answer': row.get('Correct Answer', '').strip(),
                 'Explanation': '',  # Empty - not available in source
-                'Source': row.get('Book Name', '').strip()  # Use Book Name as Source
+                'Source': source_id  # Use PREP FL + question number
             }
             
             # Only write rows that have actual question content
