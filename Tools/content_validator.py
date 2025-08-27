@@ -42,7 +42,26 @@ def extract_csv_content(csv_file_path):
             
             # Extract question data  
             question_number = row.get('Question #', '').strip()
-            source_id = f"PREP FL {question_number}" if question_number else "PREP FL"
+            
+            # Auto-detect question type from file path
+            if 'Quiz' in str(csv_file_path):
+                detected_type = 'Quiz'
+            elif 'Final' in str(csv_file_path):
+                detected_type = 'Final'
+            else:
+                detected_type = ''
+            
+            # Build source ID with quiz/final distinction
+            type_prefix = f" {detected_type}" if detected_type else ""
+            
+            if question_number.startswith('P') and len(question_number) > 1:
+                # P-series questions: "P4" -> "PREP FL Quiz P.4." or "PREP FL Final P.4."
+                source_id = f"PREP FL{type_prefix} P.{question_number[1:]}."
+            elif question_number:
+                # Regular questions: "1.1" -> "PREP FL Quiz 1.1." or "PREP FL Final 1.1."
+                source_id = f"PREP FL{type_prefix} {question_number}."
+            else:
+                source_id = f"PREP FL{type_prefix}."
             
             question_data = {
                 'question': question_stem,

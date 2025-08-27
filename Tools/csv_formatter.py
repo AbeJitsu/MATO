@@ -8,12 +8,15 @@ import csv
 import sys
 from pathlib import Path
 
-def format_csv_for_converter(input_csv_path, output_csv_path):
+def format_csv_for_converter(input_csv_path, output_csv_path, question_type=None):
     """
     Transform CSV from original format to converter-expected format
     
     Original format: Book Name,Question #,Question Stem,Answer A,Answer B,Answer C,Answer D,Correct Answer
     Target format: Question,Choice 1,Choice 2,Choice 3,Choice 4,Correct Answer,Explanation,Source
+    
+    Args:
+        question_type: 'Quiz' or 'Final' to distinguish source types
     """
     
     questions_processed = 0
@@ -50,7 +53,29 @@ def format_csv_for_converter(input_csv_path, output_csv_path):
             
             # Transform the row to target format
             question_number = row.get('Question #', '').strip()
-            source_id = f"PREP FL {question_number}" if question_number else "PREP FL"
+            
+            # Auto-detect question type from file path if not provided
+            if question_type is None:
+                if 'Quiz' in str(input_csv_path):
+                    detected_type = 'Quiz'
+                elif 'Final' in str(input_csv_path):
+                    detected_type = 'Final'
+                else:
+                    detected_type = ''
+            else:
+                detected_type = question_type
+            
+            # Build source ID with quiz/final distinction
+            type_prefix = f" {detected_type}" if detected_type else ""
+            
+            if question_number.startswith('P') and len(question_number) > 1:
+                # P-series questions: "P4" -> "PREP FL Quiz P.4." or "PREP FL Final P.4."
+                source_id = f"PREP FL{type_prefix} P.{question_number[1:]}."
+            elif question_number:
+                # Regular questions: "1.1" -> "PREP FL Quiz 1.1." or "PREP FL Final 1.1."
+                source_id = f"PREP FL{type_prefix} {question_number}."
+            else:
+                source_id = f"PREP FL{type_prefix}."
             
             formatted_row = {
                 'Question': question_stem,
