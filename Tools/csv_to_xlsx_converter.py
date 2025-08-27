@@ -43,16 +43,28 @@ def parse_csv_questions(csv_file_path):
             # Determine question type
             question_type = 'TF' if len(choices) == 2 and 'True' in choices and 'False' in choices else 'MC'
             
-            # Handle multiple correct answers (like "1, 2, 3")
+            # Handle multiple correct answers (like "1, 2, 3" or "A, B, C")
             if ',' in correct_answer:
                 question_type = 'MA'  # Multiple Answer
-                correct_indices = [int(x.strip()) - 1 for x in correct_answer.split(',') if x.strip().isdigit()]
+                correct_indices = []
+                for x in correct_answer.split(','):
+                    x = x.strip().upper()
+                    if x.isdigit():
+                        # Numeric (1-based)
+                        correct_indices.append(int(x) - 1)
+                    elif len(x) == 1 and x.isalpha():
+                        # Letter-based (A=0, B=1, etc.)
+                        correct_indices.append(ord(x) - ord('A'))
             elif correct_answer.lower() in ['true', 'false']:
                 # For True/False questions
                 correct_indices = [0 if correct_answer.lower() == 'true' else 1]
             elif correct_answer.isdigit():
                 # Numeric answer (1-based)
                 correct_indices = [int(correct_answer) - 1]
+            elif len(correct_answer.strip()) == 1 and correct_answer.strip().upper().isalpha():
+                # Single letter answer (A, B, C, D)
+                letter = correct_answer.strip().upper()
+                correct_indices = [ord(letter) - ord('A')]
             else:
                 # Try to find answer text match
                 correct_indices = []

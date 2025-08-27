@@ -40,7 +40,10 @@ def extract_csv_content(csv_file_path):
                 not any(row.get(f'Answer {letter}', '').strip() for letter in ['A', 'B', 'C', 'D'])):
                 continue
             
-            # Extract question data
+            # Extract question data  
+            question_number = row.get('Question #', '').strip()
+            source_id = f"PREP FL {question_number}" if question_number else "PREP FL"
+            
             question_data = {
                 'question': question_stem,
                 'choices': [
@@ -50,7 +53,7 @@ def extract_csv_content(csv_file_path):
                     row.get('Answer D', '').strip()
                 ],
                 'correct_answer': row.get('Correct Answer', '').strip(),
-                'source': row.get('Book Name', '').strip()
+                'source': source_id
             }
             
             # Only include questions with actual content
@@ -139,10 +142,10 @@ def extract_xlsx_content(xlsx_file_path):
     return questions
 
 def convert_indices_to_letter(indices):
-    """Convert list of 0-based indices to letter format (e.g., [0,2] -> 'A, C')"""
+    """Convert list of 0-based indices to letter format (e.g., [3] -> 'D', [0,2] -> 'A, C')"""
     if not indices:
         return ''
-    letters = [chr(65 + idx) for idx in sorted(indices) if idx >= 0]
+    letters = [chr(65 + idx) for idx in sorted(indices) if idx >= 0 and idx < 26]
     return ', '.join(letters) if len(letters) > 1 else letters[0] if letters else ''
 
 def generate_content_hash(questions):
