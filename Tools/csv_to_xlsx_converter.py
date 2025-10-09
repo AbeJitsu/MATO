@@ -151,8 +151,20 @@ def create_xlsx_output(questions, output_file_path, section_id="DTOX101-LESSON1"
         ['Track Details']
     ])
     
-    # Add each section's question count
-    for section, count in sorted(section_counts.items()):
+    # Add each section's question count with natural sorting
+    # Sort by extracting numerical parts for proper ordering (1.1, 1.2, ... 1.10, 1.11, etc.)
+    def natural_sort_key(item):
+        """Sort key that handles numerical parts correctly"""
+        section = item[0]
+        # Extract numbers from the section ID for proper sorting
+        import re
+        parts = re.findall(r'\d+', section)
+        if len(parts) >= 2:
+            # Convert to integers for numerical sorting: e.g., "1.2" -> (1, 2)
+            return tuple(int(p) for p in parts)
+        return (section,)  # Fallback to string if pattern doesn't match
+
+    for section, count in sorted(section_counts.items(), key=natural_sort_key):
         debug_rows.append([f'  {section}', f'{count} questions'])
     
     debug_rows.extend([
